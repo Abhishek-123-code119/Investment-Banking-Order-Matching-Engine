@@ -86,16 +86,3 @@ OrderMatchingEngine/
 
 ---
 
-## 💡 JPMC Interview Talking Points
-
-**"Why a Max-Heap for buys?"**
-The highest bid is always at the root → O(log n) access to the best buy price. Inserting a new bid or removing a filled one is also O(log n). A sorted list would be O(n) insert.
-
-**"Why lazy deletion for cancellations?"**
-When an order is cancelled we mark it in the HashMap (O(1)) but leave it in the heap. On the next `peek()` or `poll()` we skip it. This avoids an O(n) heap search-and-rebuild. The same pattern is used in Dijkstra's algorithm.
-
-**"Why one executor per symbol instead of a global lock?"**
-AAPL matching should never wait for TSLA to finish. A global lock serializes all symbols. Per-symbol executors give true parallelism — each symbol's book is only ever touched by one thread at a time, so no synchronization is needed inside the book itself (we still have the RW lock for concurrent market-data reads).
-
-**"What is VWAP and why does it matter?"**
-Volume-Weighted Average Price = Σ(price × qty) / Σ(qty). Traders use it to benchmark execution quality. If you bought at a price below the day's VWAP you got a good deal.
